@@ -24,8 +24,12 @@ python?.??.sublime-workspace
 # Build and distribution
 build/
 dist/
+*.spec
 *.egg-info/
 *.egg
+
+# Application data
+data/
 
 # Logs and databases
 *.log
