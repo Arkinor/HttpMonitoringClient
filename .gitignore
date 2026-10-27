@@ -1,0 +1,52 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs
+.idea/
+idea
+.idea
+.vscode/
+*.swp
+*.swo
+*.xml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+python?.??.sublime-project
+python?.??.sublime-workspace
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+BASE.json
+passwords.json
+result.json
+.orche
+.orchestra
+*json
+*jsonl
+
+.orchestra/
+.orchestra
+.gigacode/
