@@ -14,6 +14,7 @@ from typing import Any, Optional
 import aiohttp
 
 from servicemonitor import config
+from servicemonitor.core.httpcheck import _safe_headers
 from servicemonitor.models import CHANNEL_LABELS, EmailSettings, Service, Settings, now_iso
 from servicemonitor.storage import storage
 
@@ -236,7 +237,7 @@ async def _send_webhook(
         raise NotificationError("URL webhook должен начинаться с http:// или https://")
 
     payload, is_json = _webhook_payload(settings, service, result, event)
-    headers = cfg.enabled_headers()
+    headers = _safe_headers(cfg.enabled_headers())
     if is_json and not any(key.lower() == "content-type" for key in headers):
         headers["Content-Type"] = "application/json; charset=utf-8"
     if not is_json and not any(key.lower() == "content-type" for key in headers):

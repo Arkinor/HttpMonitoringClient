@@ -50,13 +50,37 @@ def _decode_body(raw: bytes, charset: Optional[str]) -> str:
         return raw.decode("utf-8", errors="replace")
 
 
+def _latin1_safe(value: str) -> str:
+    """Encode non-ASCII header values so aiohttp can send them.
+
+    aiohttp encodes headers as latin-1 and raises UnicodeEncodeError for
+    values containing e.g. Cyrillic. Re-encode such values as UTF-8 bytes
+    viewed through latin-1, which aiohttp will send verbatim.
+    """
+    try:
+        value.encode("latin-1")
+        return value
+    except UnicodeEncodeError:
+        return value.encode("utf-8").decode("latin-1")
+
+
+def _safe_headers(headers: dict[str, str]) -> dict[str, str]:
+    return {
+        _latin1_safe(str(key).strip()): _latin1_safe(str(value))
+        for key, value in headers.items()
+        if str(key).strip()
+    }
+
+
 def _request_kwargs(service: Service, settings: Settings) -> dict[str, Any]:
-    headers = service.enabled_headers()
+    headers = _safe_headers(service.enabled_headers())
     auth = service.auth
     request_auth: Optional[aiohttp.BasicAuth] = None
 
     if auth.type == "basic" and (auth.username or auth.password):
-        request_auth = aiohttp.BasicAuth(auth.username, auth.password)
+        request_auth = aiohttp.BasicAuth(
+            auth.username, auth.password, encoding="utf-8"
+        )
     elif auth.type == "bearer" and auth.token:
         headers.setdefault("Authorization", f"Bearer {auth.token}")
 
